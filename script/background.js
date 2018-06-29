@@ -24,13 +24,16 @@ chrome.contextMenus.create({
             // alert(cook);
             // })
 
-            var cook='';
+            var table_body='';
             chrome.tabs.getSelected(null, function (tab) {
                 chrome.cookies.getAll({url:tab.url},function(cookie) {
                     cookie.forEach(function(c){ 
-                        cook = cook + c.name + '=' + c.value + ';'
+                        table_body = table_body + c.name + ':' + c.value + ';'
+                        // table_body = table_body +'<th>'+ c.name + '</th><th>' + c.value + '<th>'
                     });
-                alert(cook);
+                // tabel_head='<table border="1" cellspacing="0" cellpadding="0"><tr><th>key</th><th>value</th></tr><tr>'
+                // tabel_foot='</tr></table>'
+                alert(table_body);
                 })
                 // alert(tab.url);
                 _url = tab.url;
@@ -50,9 +53,15 @@ chrome.contextMenus.create({
         title: "Clear Cookie",
         onclick: function() {
             chrome.tabs.getSelected(null, function (tab) {
-                alert(tab.url);
+                chrome.cookies.getAll({url:tab.url},function(cookie) {
+                    cookie.forEach(function(c){ 
+                        chrome.cookies.remove({url:tab.url,name:c.name},function(result){
+                            console.log(result);
+                        });
+                    });
+                });
+                alert('cookie cleared');
             });
-            // alert("clear cookie")
         },
         contexts: ["all"]
     });
